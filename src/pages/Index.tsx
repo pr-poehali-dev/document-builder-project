@@ -195,6 +195,12 @@ const Index = () => {
       return;
     }
 
+    const borderStyle = {
+      style: BorderStyle.SINGLE,
+      size: 1,
+      color: "000000",
+    };
+
     const doc = new Document({
       sections: [{
         properties: {},
@@ -212,7 +218,7 @@ const Index = () => {
             alignment: AlignmentType.CENTER,
             children: [
               new TextRun({
-                text: 'ФЕДЕРАЛЬНОЕ ГОСУДАРСТВЕННОЕ',
+                text: 'ФЕДЕРАЛЬНОЕ ГОСУДАРСТВЕННОЕ БЮДЖЕТНОЕ',
                 size: 22,
               }),
             ],
@@ -266,67 +272,101 @@ const Index = () => {
               }),
             ],
           }),
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: `Выпускающая кафедра: ИСТ`,
-                size: 22,
+          new Table({
+            width: { size: 100, type: WidthType.PERCENTAGE },
+            borders: {
+              top: borderStyle,
+              bottom: borderStyle,
+              left: borderStyle,
+              right: borderStyle,
+              insideHorizontal: borderStyle,
+              insideVertical: borderStyle,
+            },
+            rows: [
+              new TableRow({
+                children: [
+                  new TableCell({
+                    children: [new Paragraph({ text: 'Выпускающая кафедра', alignment: AlignmentType.LEFT })],
+                    width: { size: 40, type: WidthType.PERCENTAGE },
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: 'ИСТ', alignment: AlignmentType.CENTER })],
+                    width: { size: 60, type: WidthType.PERCENTAGE },
+                  }),
+                ],
               }),
-            ],
-          }),
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: `Группа (ы): ${formData.studentGroup}`,
-                size: 22,
+              new TableRow({
+                children: [
+                  new TableCell({
+                    children: [new Paragraph({ text: 'Группа (ы)' })],
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: formData.studentGroup, alignment: AlignmentType.CENTER })],
+                  }),
+                ],
               }),
-            ],
-          }),
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: `Вид практики: ${formData.practiceType}`,
-                size: 22,
+              new TableRow({
+                children: [
+                  new TableCell({
+                    children: [new Paragraph({ text: 'Вид практики' })],
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: formData.practiceType, alignment: AlignmentType.CENTER })],
+                  }),
+                ],
               }),
-            ],
-          }),
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: `Тип практики: ${formData.practiceSubtype}`,
-                size: 22,
+              new TableRow({
+                children: [
+                  new TableCell({
+                    children: [new Paragraph({ text: 'Тип практики' })],
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: formData.practiceSubtype, alignment: AlignmentType.CENTER })],
+                  }),
+                ],
               }),
-            ],
-          }),
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: `Количество обучающихся: ${formData.studentCount}`,
-                size: 22,
+              new TableRow({
+                children: [
+                  new TableCell({
+                    children: [new Paragraph({ text: 'Количество обучающихся, чел.' })],
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: formData.studentCount, alignment: AlignmentType.CENTER })],
+                  }),
+                ],
               }),
-            ],
-          }),
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: `Продолжительность практики: ${formData.duration} недель`,
-                size: 22,
+              new TableRow({
+                children: [
+                  new TableCell({
+                    children: [new Paragraph({ text: 'Продолжительность практики, количество недель' })],
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: formData.duration, alignment: AlignmentType.CENTER })],
+                  }),
+                ],
               }),
-            ],
-          }),
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: `Форма обучения: ${formData.educationForm}`,
-                size: 22,
+              new TableRow({
+                children: [
+                  new TableCell({
+                    children: [new Paragraph({ text: 'Форма обучения' })],
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: formData.educationForm, alignment: AlignmentType.CENTER })],
+                  }),
+                ],
               }),
-            ],
-          }),
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: `Период проведения практики: ${formData.practiceStartDate ? format(formData.practiceStartDate, 'dd.MM.yyyy', { locale: ru }) : ''} - ${formData.practiceEndDate ? format(formData.practiceEndDate, 'dd.MM.yyyy', { locale: ru }) : ''}`,
-                size: 22,
+              new TableRow({
+                children: [
+                  new TableCell({
+                    children: [new Paragraph({ text: 'Период проведения практики' })],
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ 
+                      text: `${formData.practiceStartDate ? format(formData.practiceStartDate, 'dd.MM.yyyy', { locale: ru }) : ''} - ${formData.practiceEndDate ? format(formData.practiceEndDate, 'dd.MM.yyyy', { locale: ru }) : ''}`, 
+                      alignment: AlignmentType.CENTER 
+                    })],
+                  }),
+                ],
               }),
             ],
           }),
@@ -340,27 +380,63 @@ const Index = () => {
               }),
             ],
           }),
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: `Приказ об организации проведения практики № ${formData.orderNumber} от ${formData.orderDate ? format(formData.orderDate, 'dd.MM.yyyy', { locale: ru }) : ''}`,
-                size: 22,
+          new Table({
+            width: { size: 100, type: WidthType.PERCENTAGE },
+            borders: {
+              top: borderStyle,
+              bottom: borderStyle,
+              left: borderStyle,
+              right: borderStyle,
+              insideHorizontal: borderStyle,
+              insideVertical: borderStyle,
+            },
+            rows: [
+              new TableRow({
+                children: [
+                  new TableCell({
+                    children: [new Paragraph({ text: 'Приказ об организации проведения практики' })],
+                    width: { size: 30, type: WidthType.PERCENTAGE },
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: '№', alignment: AlignmentType.CENTER })],
+                    width: { size: 10, type: WidthType.PERCENTAGE },
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: formData.orderNumber, alignment: AlignmentType.CENTER })],
+                    width: { size: 30, type: WidthType.PERCENTAGE },
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: 'Дата', alignment: AlignmentType.CENTER })],
+                    width: { size: 10, type: WidthType.PERCENTAGE },
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: formData.orderDate ? format(formData.orderDate, 'dd.MM.yyyy', { locale: ru }) : '', alignment: AlignmentType.CENTER })],
+                    width: { size: 20, type: WidthType.PERCENTAGE },
+                  }),
+                ],
               }),
-            ],
-          }),
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: `ФИО, должность руководителя практики от Университета: ${formData.fio}, ${formData.supervisor}`,
-                size: 22,
+              new TableRow({
+                children: [
+                  new TableCell({
+                    children: [new Paragraph({ text: 'ФИО, должность руководителя практики от Университета' })],
+                    columnSpan: 2,
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: `${formData.fio}, ${formData.supervisor}`, alignment: AlignmentType.CENTER })],
+                    columnSpan: 3,
+                  }),
+                ],
               }),
-            ],
-          }),
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: `Дата проведения организационного собрания перед началом практики (проведена инструктаж по технике безопасности): ${formData.meetingDate ? format(formData.meetingDate, 'dd.MM.yyyy', { locale: ru }) : ''}`,
-                size: 22,
+              new TableRow({
+                children: [
+                  new TableCell({
+                    children: [new Paragraph({ text: 'Дата проведения организационного собрания перед началом практики (проведена инструктаж по технике безопасности)' })],
+                    columnSpan: 4,
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: formData.meetingDate ? format(formData.meetingDate, 'dd.MM.yyyy', { locale: ru }) : '', alignment: AlignmentType.CENTER })],
+                  }),
+                ],
               }),
             ],
           }),
@@ -374,59 +450,72 @@ const Index = () => {
               }),
             ],
           }),
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: `Группа: ${formData.studentGroup}`,
-                size: 22,
+          new Table({
+            width: { size: 100, type: WidthType.PERCENTAGE },
+            borders: {
+              top: borderStyle,
+              bottom: borderStyle,
+              left: borderStyle,
+              right: borderStyle,
+              insideHorizontal: borderStyle,
+              insideVertical: borderStyle,
+            },
+            rows: [
+              new TableRow({
+                children: [
+                  new TableCell({
+                    children: [new Paragraph({ text: 'Группа', alignment: AlignmentType.CENTER })],
+                    rowSpan: 2,
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: 'Количество обучающихся, направленных на практику:', alignment: AlignmentType.CENTER })],
+                    columnSpan: 6,
+                  }),
+                ],
               }),
-            ],
-          }),
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: `Количество обучающихся, направленных на практику: ${formData.studentsTotal}`,
-                size: 22,
+              new TableRow({
+                children: [
+                  new TableCell({
+                    children: [new Paragraph({ text: 'ВСЕГО', alignment: AlignmentType.CENTER })],
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: 'в качестве практиканта на оплачиваемое рабочее место', alignment: AlignmentType.CENTER })],
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: 'на которые имеют удостоверение по рабочим профессиям', alignment: AlignmentType.CENTER })],
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: 'за пределы населенного пункта, в котором расположен Университет (филиал)', alignment: AlignmentType.CENTER })],
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: 'выполняемая работа которых соответствует программе практики', alignment: AlignmentType.CENTER })],
+                  }),
+                ],
               }),
-            ],
-          }),
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: `В качестве практиканта: ${formData.studentsAsInterns}`,
-                size: 22,
-              }),
-            ],
-          }),
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: `На оплачиваемое рабочее место: ${formData.paidWorkplace}`,
-                size: 22,
-              }),
-            ],
-          }),
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: `Которые имеют удостоверение по рабочим профессиям: ${formData.withCertification}`,
-                size: 22,
-              }),
-            ],
-          }),
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: `За пределы населенного пункта, в котором расположен Университет (филиал): ${formData.outsideCity}`,
-                size: 22,
-              }),
-            ],
-          }),
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: `Выполняемая работа которых соответствует программе практики: ${formData.workMatchesProgram}`,
-                size: 22,
+              new TableRow({
+                children: [
+                  new TableCell({
+                    children: [new Paragraph({ text: formData.studentGroup, alignment: AlignmentType.CENTER })],
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: formData.studentsTotal, alignment: AlignmentType.CENTER })],
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: formData.studentsAsInterns, alignment: AlignmentType.CENTER })],
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: formData.paidWorkplace, alignment: AlignmentType.CENTER })],
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: formData.withCertification, alignment: AlignmentType.CENTER })],
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: formData.outsideCity, alignment: AlignmentType.CENTER })],
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: formData.workMatchesProgram, alignment: AlignmentType.CENTER })],
+                  }),
+                ],
               }),
             ],
           }),
@@ -440,33 +529,49 @@ const Index = () => {
               }),
             ],
           }),
-          ...formData.organizationsList.flatMap(org => [
-            new Paragraph({
-              children: [
-                new TextRun({
-                  text: `Наименование предприятия: ${org.name}`,
-                  size: 22,
-                }),
-              ],
-            }),
-            new Paragraph({
-              children: [
-                new TextRun({
-                  text: `Количество мест: ${org.count}`,
-                  size: 22,
-                }),
-              ],
-            }),
-            new Paragraph({
-              children: [
-                new TextRun({
-                  text: `Контактный телефон: ${org.phone}`,
-                  size: 22,
-                }),
-              ],
-            }),
-            new Paragraph({ text: '' }),
-          ]),
+          new Table({
+            width: { size: 100, type: WidthType.PERCENTAGE },
+            borders: {
+              top: borderStyle,
+              bottom: borderStyle,
+              left: borderStyle,
+              right: borderStyle,
+              insideHorizontal: borderStyle,
+              insideVertical: borderStyle,
+            },
+            rows: [
+              new TableRow({
+                children: [
+                  new TableCell({
+                    children: [new Paragraph({ text: 'Наименование предприятия, город', alignment: AlignmentType.CENTER })],
+                    width: { size: 60, type: WidthType.PERCENTAGE },
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: 'Кол-во мест', alignment: AlignmentType.CENTER })],
+                    width: { size: 20, type: WidthType.PERCENTAGE },
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: 'Контактный тел.', alignment: AlignmentType.CENTER })],
+                    width: { size: 20, type: WidthType.PERCENTAGE },
+                  }),
+                ],
+              }),
+              ...formData.organizationsList.map(org => new TableRow({
+                children: [
+                  new TableCell({
+                    children: [new Paragraph({ text: org.name })],
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: org.count, alignment: AlignmentType.CENTER })],
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: org.phone, alignment: AlignmentType.CENTER })],
+                  }),
+                ],
+              })),
+            ],
+          }),
+          new Paragraph({ text: '' }),
           new Paragraph({
             children: [
               new TextRun({
@@ -476,67 +581,84 @@ const Index = () => {
               }),
             ],
           }),
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: `Группа: ${formData.studentGroup}`,
-                size: 22,
+          new Table({
+            width: { size: 100, type: WidthType.PERCENTAGE },
+            borders: {
+              top: borderStyle,
+              bottom: borderStyle,
+              left: borderStyle,
+              right: borderStyle,
+              insideHorizontal: borderStyle,
+              insideVertical: borderStyle,
+            },
+            rows: [
+              new TableRow({
+                children: [
+                  new TableCell({
+                    children: [new Paragraph({ text: 'Группа', alignment: AlignmentType.CENTER })],
+                    rowSpan: 2,
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: 'Кол-во обучающихся, направленных на практику', alignment: AlignmentType.CENTER })],
+                    rowSpan: 2,
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: 'Из них предоставили отчет по практике', alignment: AlignmentType.CENTER })],
+                    rowSpan: 2,
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: 'из них защитили отчеты по практике', alignment: AlignmentType.CENTER })],
+                    columnSpan: 4,
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: 'Примечание', alignment: AlignmentType.CENTER })],
+                    rowSpan: 2,
+                  }),
+                ],
               }),
-            ],
-          }),
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: `Количество обучающихся, направленных на практику: ${formData.studentsTotal}`,
-                size: 22,
+              new TableRow({
+                children: [
+                  new TableCell({
+                    children: [new Paragraph({ text: '91-100 (отлично)', alignment: AlignmentType.CENTER })],
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: '76-90 (хорошо)', alignment: AlignmentType.CENTER })],
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: '61-75 (удовлетворительно)', alignment: AlignmentType.CENTER })],
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: '60 и менее (не удовлетворительно)', alignment: AlignmentType.CENTER })],
+                  }),
+                ],
               }),
-            ],
-          }),
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: `Из них предоставили отчет по практике: ${formData.resultsSent}`,
-                size: 22,
-              }),
-            ],
-          }),
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: `91-100 (отлично): ${formData.resultsExcellent}`,
-                size: 22,
-              }),
-            ],
-          }),
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: `76-90 (хорошо): ${formData.resultsGood}`,
-                size: 22,
-              }),
-            ],
-          }),
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: `61-75 (удовлетворительно): ${formData.resultsSatisfactory}`,
-                size: 22,
-              }),
-            ],
-          }),
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: `60 и менее (не удовлетворительно): ${formData.resultsUnsatisfactory}`,
-                size: 22,
-              }),
-            ],
-          }),
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: `Примечание: ${formData.resultsNotes}`,
-                size: 22,
+              new TableRow({
+                children: [
+                  new TableCell({
+                    children: [new Paragraph({ text: formData.studentGroup, alignment: AlignmentType.CENTER })],
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: formData.studentsTotal, alignment: AlignmentType.CENTER })],
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: formData.resultsSent, alignment: AlignmentType.CENTER })],
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: formData.resultsExcellent, alignment: AlignmentType.CENTER })],
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: formData.resultsGood, alignment: AlignmentType.CENTER })],
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: formData.resultsSatisfactory, alignment: AlignmentType.CENTER })],
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: formData.resultsUnsatisfactory, alignment: AlignmentType.CENTER })],
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: formData.resultsNotes })],
+                  }),
+                ],
               }),
             ],
           }),

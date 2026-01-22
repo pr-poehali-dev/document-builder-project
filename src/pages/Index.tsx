@@ -86,6 +86,8 @@ interface FormData {
   kafedraDiscussion: string;
   recommendations: string;
   kafedraHeadConclusion: string;
+  directorConclusion: string;
+  directorDate: Date | undefined;
   reportDate: Date | undefined;
   directorName: string;
   departmentHead: string;
@@ -124,6 +126,8 @@ const Index = () => {
     kafedraDiscussion: '',
     recommendations: '',
     kafedraHeadConclusion: '',
+    directorConclusion: '',
+    directorDate: undefined,
     reportDate: undefined,
     directorName: '',
     departmentHead: '',
@@ -140,6 +144,7 @@ const Index = () => {
         practiceEndDate: parsed.practiceEndDate ? new Date(parsed.practiceEndDate) : undefined,
         orderDate: parsed.orderDate ? new Date(parsed.orderDate) : undefined,
         meetingDate: parsed.meetingDate ? new Date(parsed.meetingDate) : undefined,
+        directorDate: parsed.directorDate ? new Date(parsed.directorDate) : undefined,
         reportDate: parsed.reportDate ? new Date(parsed.reportDate) : undefined,
       });
     }
@@ -154,6 +159,7 @@ const Index = () => {
       practiceEndDate: newData.practiceEndDate?.toISOString(),
       orderDate: newData.orderDate?.toISOString(),
       meetingDate: newData.meetingDate?.toISOString(),
+      directorDate: newData.directorDate?.toISOString(),
       reportDate: newData.reportDate?.toISOString(),
     }));
   };
@@ -744,11 +750,10 @@ const Index = () => {
               }),
             ],
           }),
-          new Paragraph({ text: '' }),
           new Paragraph({
             children: [
               new TextRun({
-                text: `Зам. Директора по учебно-методической работе: __________ ${formData.directorName}`,
+                text: formData.directorConclusion || '',
                 size: 22,
               }),
             ],
@@ -757,7 +762,15 @@ const Index = () => {
           new Paragraph({
             children: [
               new TextRun({
-                text: `«___» ___________ ${formData.reportDate ? format(formData.reportDate, 'yyyy', { locale: ru }) : ''} г.`,
+                text: 'Зам. Директора по',
+                size: 22,
+              }),
+            ],
+          }),
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: 'Учебно-методической работе',
                 size: 22,
               }),
             ],
@@ -766,8 +779,74 @@ const Index = () => {
           new Paragraph({
             children: [
               new TextRun({
-                text: `Заведующий кафедрой: __________ ${formData.departmentHead}`,
+                text: `«___» ___________ ${formData.directorDate ? format(formData.directorDate, 'yyyy', { locale: ru }) : '2024'} г.`,
                 size: 22,
+              }),
+              new TextRun({
+                text: '\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t',
+                size: 22,
+              }),
+              new TextRun({
+                text: '__________ ',
+                size: 22,
+              }),
+              new TextRun({
+                text: formData.directorName,
+                size: 22,
+              }),
+            ],
+          }),
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: '\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t',
+                size: 22,
+              }),
+              new TextRun({
+                text: '(подпись)',
+                size: 18,
+              }),
+            ],
+          }),
+          new Paragraph({ text: '' }),
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: 'Заведующий кафедрой',
+                size: 22,
+              }),
+            ],
+          }),
+          new Paragraph({ text: '' }),
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: `«___» ___________ ${formData.reportDate ? format(formData.reportDate, 'yyyy', { locale: ru }) : '2024'} г.`,
+                size: 22,
+              }),
+              new TextRun({
+                text: '\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t',
+                size: 22,
+              }),
+              new TextRun({
+                text: '__________ ',
+                size: 22,
+              }),
+              new TextRun({
+                text: formData.departmentHead,
+                size: 22,
+              }),
+            ],
+          }),
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: '\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t',
+                size: 22,
+              }),
+              new TextRun({
+                text: '(подпись)',
+                size: 18,
               }),
             ],
           }),
@@ -813,6 +892,8 @@ const Index = () => {
       kafedraDiscussion: '',
       recommendations: '',
       kafedraHeadConclusion: '',
+      directorConclusion: '',
+      directorDate: undefined,
       reportDate: undefined,
       directorName: '',
       departmentHead: '',
@@ -1336,8 +1417,17 @@ const Index = () => {
             </div>
 
             <div className="space-y-6">
-              <h3 className="text-lg font-semibold border-b pb-2">10. Заключение и подписи</h3>
+              <h3 className="text-lg font-semibold border-b pb-2">10. Заключение заместителя директора</h3>
               
+              <div className="space-y-2">
+                <Textarea
+                  value={formData.directorConclusion}
+                  onChange={(e) => handleInputChange('directorConclusion', e.target.value)}
+                  placeholder="Считать результаты практики удовлетворительными..."
+                  rows={4}
+                />
+              </div>
+
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Зам. директора по УМР</Label>
@@ -1349,6 +1439,28 @@ const Index = () => {
                 </div>
 
                 <div className="space-y-2">
+                  <Label>Дата подписи директора</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" className="w-full justify-start text-left font-normal">
+                        <Icon name="Calendar" className="mr-2" size={16} />
+                        {formData.directorDate ? format(formData.directorDate, 'dd.MM.yyyy', { locale: ru }) : 'Выберите дату'}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar
+                        mode="single"
+                        selected={formData.directorDate}
+                        onSelect={(date) => handleInputChange('directorDate', date)}
+                        locale={ru}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-2">
                   <Label>Заведующий кафедрой</Label>
                   <Input
                     value={formData.departmentHead}
@@ -1356,26 +1468,26 @@ const Index = () => {
                     placeholder="О.Ф. Данилов"
                   />
                 </div>
-              </div>
 
-              <div className="space-y-2">
-                <Label>Дата отчёта</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className="w-full justify-start text-left font-normal">
-                      <Icon name="Calendar" className="mr-2" size={16} />
-                      {formData.reportDate ? format(formData.reportDate, 'dd.MM.yyyy', { locale: ru }) : 'Выберите дату'}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      selected={formData.reportDate}
-                      onSelect={(date) => handleInputChange('reportDate', date)}
-                      locale={ru}
-                    />
-                  </PopoverContent>
-                </Popover>
+                <div className="space-y-2">
+                  <Label>Дата подписи заведующего</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" className="w-full justify-start text-left font-normal">
+                        <Icon name="Calendar" className="mr-2" size={16} />
+                        {formData.reportDate ? format(formData.reportDate, 'dd.MM.yyyy', { locale: ru }) : 'Выберите дату'}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar
+                        mode="single"
+                        selected={formData.reportDate}
+                        onSelect={(date) => handleInputChange('reportDate', date)}
+                        locale={ru}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
               </div>
             </div>
 

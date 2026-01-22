@@ -135,6 +135,7 @@ const Index = () => {
       const parsed = JSON.parse(savedData);
       setFormData({
         ...parsed,
+        organizationsList: Array.isArray(parsed.organizationsList) ? parsed.organizationsList : [],
         practiceStartDate: parsed.practiceStartDate ? new Date(parsed.practiceStartDate) : undefined,
         practiceEndDate: parsed.practiceEndDate ? new Date(parsed.practiceEndDate) : undefined,
         orderDate: parsed.orderDate ? new Date(parsed.orderDate) : undefined,

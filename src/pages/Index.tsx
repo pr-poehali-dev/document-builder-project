@@ -47,6 +47,13 @@ const practiceSubtypes = [
   'Научно-исследовательская работа',
 ];
 
+interface OrganizationEntry {
+  id: string;
+  name: string;
+  phone: string;
+  count: string;
+}
+
 interface FormData {
   academicYear: string;
   studentGroup: string;
@@ -62,14 +69,23 @@ interface FormData {
   fio: string;
   supervisor: string;
   meetingDate: Date | undefined;
-  studentsPresent: string;
+  studentsAsInterns: string;
+  paidWorkplace: string;
+  withCertification: string;
+  outsideCity: string;
+  workMatchesProgram: string;
   studentsTotal: string;
-  organization: string;
-  orgCount: string;
-  orgContact: string;
+  organizationsList: OrganizationEntry[];
+  resultsSent: string;
+  resultsExcellent: string;
+  resultsGood: string;
+  resultsSatisfactory: string;
+  resultsUnsatisfactory: string;
+  resultsNotes: string;
   qualityReview: string;
+  kafedraDiscussion: string;
   recommendations: string;
-  directorNotes: string;
+  kafedraHeadConclusion: string;
   reportDate: Date | undefined;
   directorName: string;
   departmentHead: string;
@@ -91,14 +107,23 @@ const Index = () => {
     fio: '',
     supervisor: '',
     meetingDate: undefined,
-    studentsPresent: '',
+    studentsAsInterns: '',
+    paidWorkplace: '',
+    withCertification: '',
+    outsideCity: '',
+    workMatchesProgram: '',
     studentsTotal: '',
-    organization: '',
-    orgCount: '',
-    orgContact: '',
+    organizationsList: [],
+    resultsSent: '',
+    resultsExcellent: '',
+    resultsGood: '',
+    resultsSatisfactory: '',
+    resultsUnsatisfactory: '',
+    resultsNotes: '',
     qualityReview: '',
+    kafedraDiscussion: '',
     recommendations: '',
-    directorNotes: '',
+    kafedraHeadConclusion: '',
     reportDate: undefined,
     directorName: '',
     departmentHead: '',
@@ -132,12 +157,35 @@ const Index = () => {
     }));
   };
 
-  const handleOrganizationChange = (orgName: string) => {
-    const org = organizations.find(o => o.name === orgName);
-    handleInputChange('organization', orgName);
-    if (org) {
-      handleInputChange('orgContact', org.phone);
-    }
+  const addOrganization = () => {
+    const newOrg: OrganizationEntry = {
+      id: Date.now().toString(),
+      name: '',
+      phone: '',
+      count: '',
+    };
+    handleInputChange('organizationsList', [...formData.organizationsList, newOrg]);
+  };
+
+  const removeOrganization = (id: string) => {
+    handleInputChange('organizationsList', formData.organizationsList.filter(org => org.id !== id));
+  };
+
+  const updateOrganization = (id: string, field: keyof OrganizationEntry, value: string) => {
+    const updated = formData.organizationsList.map(org => {
+      if (org.id === id) {
+        const newOrg = { ...org, [field]: value };
+        if (field === 'name') {
+          const foundOrg = organizations.find(o => o.name === value);
+          if (foundOrg) {
+            newOrg.phone = foundOrg.phone;
+          }
+        }
+        return newOrg;
+      }
+      return org;
+    });
+    handleInputChange('organizationsList', updated);
   };
 
   const generateWordDocument = async () => {
@@ -310,7 +358,7 @@ const Index = () => {
           new Paragraph({
             children: [
               new TextRun({
-                text: `Дата проведения организационного собрания: ${formData.meetingDate ? format(formData.meetingDate, 'dd.MM.yyyy', { locale: ru }) : ''}`,
+                text: `Дата проведения организационного собрания перед началом практики (проведена инструктаж по технике безопасности): ${formData.meetingDate ? format(formData.meetingDate, 'dd.MM.yyyy', { locale: ru }) : ''}`,
                 size: 22,
               }),
             ],
@@ -319,7 +367,7 @@ const Index = () => {
           new Paragraph({
             children: [
               new TextRun({
-                text: '3. Ход прохождения практики',
+                text: '3. Ход проведения практики',
                 size: 24,
                 bold: true,
               }),
@@ -336,7 +384,47 @@ const Index = () => {
           new Paragraph({
             children: [
               new TextRun({
-                text: `Всего практикантов: ${formData.studentsTotal}`,
+                text: `Количество обучающихся, направленных на практику: ${formData.studentsTotal}`,
+                size: 22,
+              }),
+            ],
+          }),
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: `В качестве практиканта: ${formData.studentsAsInterns}`,
+                size: 22,
+              }),
+            ],
+          }),
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: `На оплачиваемое рабочее место: ${formData.paidWorkplace}`,
+                size: 22,
+              }),
+            ],
+          }),
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: `Которые имеют удостоверение по рабочим профессиям: ${formData.withCertification}`,
+                size: 22,
+              }),
+            ],
+          }),
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: `За пределы населенного пункта, в котором расположен Университет (филиал): ${formData.outsideCity}`,
+                size: 22,
+              }),
+            ],
+          }),
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: `Выполняемая работа которых соответствует программе практики: ${formData.workMatchesProgram}`,
                 size: 22,
               }),
             ],
@@ -351,35 +439,37 @@ const Index = () => {
               }),
             ],
           }),
+          ...formData.organizationsList.flatMap(org => [
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: `Наименование предприятия: ${org.name}`,
+                  size: 22,
+                }),
+              ],
+            }),
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: `Количество мест: ${org.count}`,
+                  size: 22,
+                }),
+              ],
+            }),
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: `Контактный телефон: ${org.phone}`,
+                  size: 22,
+                }),
+              ],
+            }),
+            new Paragraph({ text: '' }),
+          ]),
           new Paragraph({
             children: [
               new TextRun({
-                text: `Наименование предприятия: ${formData.organization}`,
-                size: 22,
-              }),
-            ],
-          }),
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: `Количество мест: ${formData.orgCount}`,
-                size: 22,
-              }),
-            ],
-          }),
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: `Контактный телефон: ${formData.orgContact}`,
-                size: 22,
-              }),
-            ],
-          }),
-          new Paragraph({ text: '' }),
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: '6. Отзыв руководителей практики от кафедры о качестве работы практикантов:',
+                text: '5. Итоги проведения практики',
                 size: 24,
                 bold: true,
               }),
@@ -388,7 +478,99 @@ const Index = () => {
           new Paragraph({
             children: [
               new TextRun({
-                text: formData.qualityReview || 'Практику прошли студенты в срок, установленные графиком учебного процесса, отчеты соответствуют подъвагаемым требованиям',
+                text: `Группа: ${formData.studentGroup}`,
+                size: 22,
+              }),
+            ],
+          }),
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: `Количество обучающихся, направленных на практику: ${formData.studentsTotal}`,
+                size: 22,
+              }),
+            ],
+          }),
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: `Из них предоставили отчет по практике: ${formData.resultsSent}`,
+                size: 22,
+              }),
+            ],
+          }),
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: `91-100 (отлично): ${formData.resultsExcellent}`,
+                size: 22,
+              }),
+            ],
+          }),
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: `76-90 (хорошо): ${formData.resultsGood}`,
+                size: 22,
+              }),
+            ],
+          }),
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: `61-75 (удовлетворительно): ${formData.resultsSatisfactory}`,
+                size: 22,
+              }),
+            ],
+          }),
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: `60 и менее (не удовлетворительно): ${formData.resultsUnsatisfactory}`,
+                size: 22,
+              }),
+            ],
+          }),
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: `Примечание: ${formData.resultsNotes}`,
+                size: 22,
+              }),
+            ],
+          }),
+          new Paragraph({ text: '' }),
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: '6. Отзыв руководителей практики от кафедры о качестве работы практикантов',
+                size: 24,
+                bold: true,
+              }),
+            ],
+          }),
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: formData.qualityReview || 'Практику прошли студенты в срок, установленные графиком учебного процесса, отчеты соответствуют предъявляемым требованиям',
+                size: 22,
+              }),
+            ],
+          }),
+          new Paragraph({ text: '' }),
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: '7. Отчет о практике заслушан на заседании кафедры',
+                size: 24,
+                bold: true,
+              }),
+            ],
+          }),
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: formData.kafedraDiscussion || '',
                 size: 22,
               }),
             ],
@@ -406,7 +588,25 @@ const Index = () => {
           new Paragraph({
             children: [
               new TextRun({
-                text: formData.recommendations || 'Обратить внимание на правильность оформления в отчетах списка используемых числа',
+                text: formData.recommendations || 'Обратить внимание на правильность оформления в отчетах списка используемых источников',
+                size: 22,
+              }),
+            ],
+          }),
+          new Paragraph({ text: '' }),
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: '9. Заключение заведующего кафедрой о практике студентов и оценка работы руководителей практики от кафедры',
+                size: 24,
+                bold: true,
+              }),
+            ],
+          }),
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: formData.kafedraHeadConclusion || '',
                 size: 22,
               }),
             ],
@@ -473,14 +673,23 @@ const Index = () => {
       fio: '',
       supervisor: '',
       meetingDate: undefined,
-      studentsPresent: '',
+      studentsAsInterns: '',
+      paidWorkplace: '',
+      withCertification: '',
+      outsideCity: '',
+      workMatchesProgram: '',
       studentsTotal: '',
-      organization: '',
-      orgCount: '',
-      orgContact: '',
+      organizationsList: [],
+      resultsSent: '',
+      resultsExcellent: '',
+      resultsGood: '',
+      resultsSatisfactory: '',
+      resultsUnsatisfactory: '',
+      resultsNotes: '',
       qualityReview: '',
+      kafedraDiscussion: '',
       recommendations: '',
-      directorNotes: '',
+      kafedraHeadConclusion: '',
       reportDate: undefined,
       directorName: '',
       departmentHead: '',
@@ -712,21 +921,20 @@ const Index = () => {
             </div>
 
             <div className="space-y-6">
-              <h3 className="text-lg font-semibold border-b pb-2">3. Ход прохождения практики</h3>
+              <h3 className="text-lg font-semibold border-b pb-2">3. Ход проведения практики</h3>
               
+              <div className="space-y-2">
+                <Label>Группа (автозаполнение)</Label>
+                <Input
+                  value={formData.studentGroup}
+                  disabled
+                  className="bg-muted"
+                />
+              </div>
+
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Присутствовало студентов</Label>
-                  <Input
-                    type="number"
-                    value={formData.studentsPresent}
-                    onChange={(e) => handleInputChange('studentsPresent', e.target.value)}
-                    placeholder="27"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Всего студентов</Label>
+                  <Label>Всего студентов направлено</Label>
                   <Input
                     type="number"
                     value={formData.studentsTotal}
@@ -734,47 +942,221 @@ const Index = () => {
                     placeholder="27"
                   />
                 </div>
+
+                <div className="space-y-2">
+                  <Label>В качестве практиканта</Label>
+                  <Input
+                    type="number"
+                    value={formData.studentsAsInterns}
+                    onChange={(e) => handleInputChange('studentsAsInterns', e.target.value)}
+                    placeholder="27"
+                  />
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>На оплачиваемое рабочее место</Label>
+                  <Input
+                    type="number"
+                    value={formData.paidWorkplace}
+                    onChange={(e) => handleInputChange('paidWorkplace', e.target.value)}
+                    placeholder="0"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Имеют удостоверение по рабочим профессиям</Label>
+                  <Input
+                    type="number"
+                    value={formData.withCertification}
+                    onChange={(e) => handleInputChange('withCertification', e.target.value)}
+                    placeholder="0"
+                  />
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>За пределы населенного пункта</Label>
+                  <Input
+                    type="number"
+                    value={formData.outsideCity}
+                    onChange={(e) => handleInputChange('outsideCity', e.target.value)}
+                    placeholder="0"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Работа соответствует программе практики</Label>
+                  <Input
+                    type="number"
+                    value={formData.workMatchesProgram}
+                    onChange={(e) => handleInputChange('workMatchesProgram', e.target.value)}
+                    placeholder="27"
+                  />
+                </div>
               </div>
             </div>
 
             <div className="space-y-6">
-              <h3 className="text-lg font-semibold border-b pb-2">4. Предприятия для практики</h3>
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold border-b pb-2 flex-1">4. Предприятия для практики</h3>
+                <Button onClick={addOrganization} size="sm" variant="outline">
+                  <Icon name="Plus" size={16} className="mr-2" />
+                  Добавить организацию
+                </Button>
+              </div>
               
-              <div className="space-y-4">
+              {formData.organizationsList.length === 0 && (
+                <div className="text-center py-8 text-muted-foreground">
+                  <Icon name="Building2" size={48} className="mx-auto mb-2 opacity-50" />
+                  <p>Нажмите "Добавить организацию" для начала</p>
+                </div>
+              )}
+
+              {formData.organizationsList.map((org, index) => (
+                <Card key={org.id} className="p-4 border-2">
+                  <div className="flex items-start justify-between mb-4">
+                    <h4 className="font-semibold">Организация {index + 1}</h4>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeOrganization(org.id)}
+                      className="text-destructive hover:text-destructive"
+                    >
+                      <Icon name="Trash2" size={16} />
+                    </Button>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label>Организация</Label>
+                      <Select 
+                        value={org.name} 
+                        onValueChange={(value) => updateOrganization(org.id, 'name', value)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Выберите организацию" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {organizations.map((o) => (
+                            <SelectItem key={o.name} value={o.name}>{o.name}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Контактный телефон</Label>
+                        <Input
+                          value={org.phone}
+                          disabled
+                          className="bg-muted"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Количество мест</Label>
+                        <Input
+                          type="number"
+                          value={org.count}
+                          onChange={(e) => updateOrganization(org.id, 'count', e.target.value)}
+                          placeholder="1"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+
+            <div className="space-y-6">
+              <h3 className="text-lg font-semibold border-b pb-2">5. Итоги проведения практики</h3>
+              
+              <div className="space-y-2">
+                <Label>Группа (автозаполнение)</Label>
+                <Input
+                  value={formData.studentGroup}
+                  disabled
+                  className="bg-muted"
+                />
+              </div>
+
+              <div className="grid md:grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <Label>Организация</Label>
-                  <Select value={formData.organization} onValueChange={handleOrganizationChange}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Выберите организацию" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {organizations.map((org) => (
-                        <SelectItem key={org.name} value={org.name}>{org.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Label>Направлено на практику</Label>
+                  <Input
+                    value={formData.studentsTotal}
+                    disabled
+                    className="bg-muted"
+                  />
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Количество мест</Label>
-                    <Input
-                      type="number"
-                      value={formData.orgCount}
-                      onChange={(e) => handleInputChange('orgCount', e.target.value)}
-                      placeholder="1"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Контактный телефон</Label>
-                    <Input
-                      value={formData.orgContact}
-                      onChange={(e) => handleInputChange('orgContact', e.target.value)}
-                      disabled
-                    />
-                  </div>
+                <div className="space-y-2">
+                  <Label>Предоставили отчет</Label>
+                  <Input
+                    type="number"
+                    value={formData.resultsSent}
+                    onChange={(e) => handleInputChange('resultsSent', e.target.value)}
+                    placeholder="27"
+                  />
                 </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>91-100 (отлично)</Label>
+                  <Input
+                    type="number"
+                    value={formData.resultsExcellent}
+                    onChange={(e) => handleInputChange('resultsExcellent', e.target.value)}
+                    placeholder="0"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>76-90 (хорошо)</Label>
+                  <Input
+                    type="number"
+                    value={formData.resultsGood}
+                    onChange={(e) => handleInputChange('resultsGood', e.target.value)}
+                    placeholder="0"
+                  />
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>61-75 (удовлетворительно)</Label>
+                  <Input
+                    type="number"
+                    value={formData.resultsSatisfactory}
+                    onChange={(e) => handleInputChange('resultsSatisfactory', e.target.value)}
+                    placeholder="0"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>60 и менее (не удовлетворительно)</Label>
+                  <Input
+                    type="number"
+                    value={formData.resultsUnsatisfactory}
+                    onChange={(e) => handleInputChange('resultsUnsatisfactory', e.target.value)}
+                    placeholder="0"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Примечание</Label>
+                <Textarea
+                  value={formData.resultsNotes}
+                  onChange={(e) => handleInputChange('resultsNotes', e.target.value)}
+                  placeholder="Дополнительная информация..."
+                  rows={3}
+                />
               </div>
             </div>
 
@@ -792,6 +1174,19 @@ const Index = () => {
             </div>
 
             <div className="space-y-6">
+              <h3 className="text-lg font-semibold border-b pb-2">7. Отчет о практике заслушан на заседании кафедры</h3>
+              
+              <div className="space-y-2">
+                <Textarea
+                  value={formData.kafedraDiscussion}
+                  onChange={(e) => handleInputChange('kafedraDiscussion', e.target.value)}
+                  placeholder="Протокол № ___ от ___________"
+                  rows={3}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-6">
               <h3 className="text-lg font-semibold border-b pb-2">8. Замечания и предложения</h3>
               
               <div className="space-y-2">
@@ -799,6 +1194,19 @@ const Index = () => {
                   value={formData.recommendations}
                   onChange={(e) => handleInputChange('recommendations', e.target.value)}
                   placeholder="Обратить внимание на правильность оформления..."
+                  rows={4}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              <h3 className="text-lg font-semibold border-b pb-2">9. Заключение заведующего кафедрой</h3>
+              
+              <div className="space-y-2">
+                <Textarea
+                  value={formData.kafedraHeadConclusion}
+                  onChange={(e) => handleInputChange('kafedraHeadConclusion', e.target.value)}
+                  placeholder="Заключение о практике студентов и оценка работы руководителей..."
                   rows={4}
                 />
               </div>
